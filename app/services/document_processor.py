@@ -6,6 +6,7 @@ from app.models.document import DocumentChunk
 from app.utils.text_splitters import fixed_size_chunking, recursive_character_chunking
 from app.core.config import settings
 import logging
+import pdfplumber
 
 logging.basicConfig(level=logging.INFO) # Set logging level for better visibility
 logger = logging.getLogger(__name__)
@@ -14,54 +15,47 @@ class DocumentProcessor:
     def __init__(self, embedding_model_name: str = settings.EMBEDDING_MODEL_NAME):
         self.embedding_model = SentenceTransformer(embedding_model_name)
         print(f"Loaded embedding model: {embedding_model_name}")
+    def normalize_text(self, raw_text: str) -> str:
+        lines = raw_text.splitlines()
+        joined = " ".join(line.strip() for line in lines if line.strip())
+        return ' '.join(joined.split())
 
     def extract_text(self, file_content: bytes, file_type: str) -> str:
-        """
-        Extracts text from PDF or TXT file content.
-        """
         if file_type == "application/pdf":
-            return self._extract_text_from_pdf(file_content)
+            try:
+                text = self._extract_text_from_pdf(file_content)
+                if not text.strip():
+                    raise ValueError("Empty text from PDF — possibly scanned.")
+                return self.normalize_text(text)
+            except Exception:
+                logger.warning("Falling back to OCR for PDF.")
+                return self.normalize_text(self.ocr_pdf(file_content))
         elif file_type == "text/plain":
-            return file_content.decode('utf-8')
+            return self.normalize_text(file_content.decode('utf-8'))
         else:
             raise ValueError(f"Unsupported file type: {file_type}")
+
     def _extract_text_from_pdf(self, pdf_bytes: bytes) -> str:
-        """Extracts text content from a PDF file using pypdf."""
-        full_text = []
         try:
-            pdf_file = io.BytesIO(pdf_bytes)
-            reader = PdfReader(pdf_file)
-
-            if reader.is_encrypted:
-                logger.error("PDF is encrypted and cannot be processed without a password.")
-                raise ValueError("Encrypted PDF: Cannot extract text without a password.")
-
-            for page_num, page in enumerate(reader.pages):
-                try:
+            text_pages = []
+            with pdfplumber.open(io.BytesIO(pdf_bytes)) as pdf:
+                for i, page in enumerate(pdf.pages):
                     page_text = page.extract_text()
                     if page_text:
-                        full_text.append(page_text)
+                        text_pages.append(page_text)
                     else:
-                        logger.warning(f"Extracted empty or no text from page {page_num + 1} of PDF.")
-                except Exception as page_e:
-                    logger.error(f"Error extracting text from page {page_num + 1}: {page_e}", exc_info=True)
-                    # Decide if you want to skip this page or fail completely
-                    # For now, we'll log and continue to next page
-                    pass 
-
-            combined_text = "\n".join(full_text)
+                        logger.warning(f"No text found on page {i + 1} (may be scanned image).")
             
-            # Critical check for empty content AFTER extraction
+            combined_text = "\n\n".join(text_pages)
             if not combined_text.strip():
-                logger.warning("PDF extraction resulted in an entirely empty string after processing all pages. This might be a scanned PDF without OCR or malformed.")
-                raise ValueError("PDF content is empty or unextractable (e.g., scanned without OCR).")
+                raise ValueError("No extractable text. This may be a scanned PDF or image-only.")
             
-            logger.info("Text extracted from PDF successfully.")
+            logger.info("Text extracted using pdfplumber.")
             return combined_text
 
         except Exception as e:
-            logger.error(f"Failed to read or process PDF file for text extraction: {e}", exc_info=True)
-            raise ValueError(f"Could not process PDF file: {e}. Check PDF integrity or if it's a scanned document.")
+            logger.error(f"PDF loading failed: {e}", exc_info=True)
+            raise ValueError("PDF parsing failed.")
 
     def chunk_text(self, text: str, strategy: Literal["fixed_size", "recursive_character"], document_id: str) -> List[DocumentChunk]:
         """

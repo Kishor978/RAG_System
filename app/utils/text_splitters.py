@@ -128,7 +128,6 @@ def recursive_character_chunking(text: str, chunk_size: int, overlap: int, separ
     return refined_chunks
 
 
-# Example usage (for testing)
 if __name__ == "__main__":
     text = "This is a sentence. This is another sentence.\n\nThis is a new paragraph. It has more text."
     
