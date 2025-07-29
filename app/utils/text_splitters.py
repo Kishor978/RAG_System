@@ -1,5 +1,9 @@
 from typing import List
 import re
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 def fixed_size_chunking(text: str, chunk_size: int, overlap: int) -> List[str]:
     """
@@ -32,7 +36,7 @@ def recursive_character_chunking(text: str, chunk_size: int, overlap: int, separ
     Prioritizes larger separators first (e.g., paragraphs, then sentences, then words).
     """
     if separators is None:
-        separators = ["\n\n", "\n", " ", ""] # Paragraphs, lines, words, characters
+        separators = ["\n\n", "\n", " "] # Paragraphs, lines, words
 
     chunks = []
     current_text = text
@@ -66,10 +70,13 @@ def recursive_character_chunking(text: str, chunk_size: int, overlap: int, separ
             merged_chunks.append(temp_chunks[0])
             for i in range(1, len(temp_chunks)):
                 # If adding the next chunk (with overlap) keeps it within chunk_size
-                if len(merged_chunks[-1]) + len(temp_chunks[i]) - overlap <= chunk_size:
-                    merged_chunks[-1] += separator + temp_chunks[i] # Merge
+                max_chunk_length = chunk_size
+                prev_len = len(merged_chunks[-1])
+                next_len = len(temp_chunks[i]) + len(separator)
+                if (prev_len + next_len - overlap) <= max_chunk_length:
+                    merged_chunks[-1] += separator + temp_chunks[i]
                 else:
-                    merged_chunks.append(temp_chunks[i]) # New chunk
+                    merged_chunks.append(temp_chunks[i])
 
         current_text = "" # Reset to build from merged chunks
         for chunk in merged_chunks:
@@ -113,6 +120,10 @@ def recursive_character_chunking(text: str, chunk_size: int, overlap: int, separ
                 refined_chunks[-1] += separator + processed_chunks[i]
             else:
                 refined_chunks.append(processed_chunks[i])
+    logger.info(f"Chunking: final number of chunks: {len(refined_chunks)}")
+    for i, chunk in enumerate(refined_chunks):
+        logger.debug(f"Chunk {i}: {chunk[:60]}... (len={len(chunk)})")
+
     
     return refined_chunks
 
