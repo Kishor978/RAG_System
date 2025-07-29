@@ -1,0 +1,5 @@
+This is a simple text document.
+It has a few lines.
+We will use it to test our ingestion API.
+This is the fourth line, and it's a bit longer to test chunking.
+The quick brown fox jumps over the lazy dog.
