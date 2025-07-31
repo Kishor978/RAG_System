@@ -2,7 +2,15 @@ fastapi
 uvicorn[standard]
 python-multipart 
 pypdf
+pdfplumber
 sentence-transformers
 qdrant-client
 sqlalchemy
+redis
 uuid
+scikit-learn
+numpy
+pydantic
+pydantic-settings
+email-validator
+google-generativeai

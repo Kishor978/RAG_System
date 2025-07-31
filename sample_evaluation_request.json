@@ -1,0 +1,36 @@
+{
+  "evaluation_documents": [
+    {
+      "document_id": "doc1",
+      "text": "Chunking in RAG systems is a process of breaking down large documents into smaller, manageable pieces called chunks. This enables more efficient retrieval and processing of relevant information. There are different chunking strategies: fixed-size chunking divides the text into chunks of a predefined size, while recursive character chunking uses hierarchical splitting based on separators like paragraphs, sentences, and words."
+    },
+    {
+      "document_id": "doc2",
+      "text": "Vector databases are specialized databases designed to store and query vector embeddings efficiently. They support similarity search operations like nearest neighbor search. Qdrant is an open-source vector database that provides approximate nearest neighbor search capabilities with a focus on filtering support. It uses various distance metrics like cosine similarity and dot product for finding similar vectors."
+    },
+    {
+      "document_id": "doc3",
+      "text": "Embedding models convert text into numerical vector representations that capture semantic meaning. The all-MiniLM-L6-v2 model is a lightweight embedding model that produces 384-dimensional vectors and offers a good balance between performance and computational efficiency. These embeddings enable semantic search capabilities in RAG systems."
+    }
+  ],
+  "test_queries": [
+    {
+      "query": "What is chunking in RAG?",
+      "relevant_doc_ids": ["doc1"]
+    },
+    {
+      "query": "Explain vector databases",
+      "relevant_doc_ids": ["doc2"]
+    },
+    {
+      "query": "How do embedding models work?",
+      "relevant_doc_ids": ["doc3"]
+    },
+    {
+      "query": "What chunking methods exist?",
+      "relevant_doc_ids": ["doc1"]
+    }
+  ],
+  "chunking_methods": ["fixed_size", "recursive_character"],
+  "similarity_algorithms": ["cosine", "dot_product"]
+}
