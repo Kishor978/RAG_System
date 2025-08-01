@@ -11,24 +11,84 @@
     {
       "document_id": "doc3",
       "text": "Embedding models convert text into numerical vector representations that capture semantic meaning. The all-MiniLM-L6-v2 model is a lightweight embedding model that produces 384-dimensional vectors and offers a good balance between performance and computational efficiency. These embeddings enable semantic search capabilities in RAG systems."
+    },
+    {
+      "document_id": "doc4",
+      "text": "Fixed-size chunking is a simple strategy that divides text into chunks of equal length. Typically, chunks are created by splitting the text into segments of N tokens or characters. Overlap is often used, where a certain percentage of text is shared between adjacent chunks to avoid breaking semantic units across chunk boundaries. While simple to implement, fixed-size chunking might split text at suboptimal points, cutting through sentences or paragraphs in ways that lose context."
+    },
+    {
+      "document_id": "doc5",
+      "text": "Recursive character chunking uses a hierarchical approach to divide documents based on natural text separators. It first tries to split by the largest units (like paragraphs), then progressively moves to smaller units (sentences, words) if chunks are still too large. This preserves semantic coherence better than fixed-size chunking. The algorithm recursively applies separator patterns (newlines, periods, spaces) until chunks of appropriate size are created, making it more context-aware but computationally more complex."
+    },
+    {
+      "document_id": "doc6",
+      "text": "Cosine similarity is a metric used to measure similarity between two vectors by calculating the cosine of the angle between them. The resulting value ranges from -1 (exactly opposite) to 1 (exactly the same), with 0 indicating orthogonality. For text embeddings, which are typically in positive space, the range is usually 0 to 1. Cosine similarity is particularly useful for text analysis because it measures orientation rather than magnitude, thus addressing the issue of document length variability."
+    },
+    {
+      "document_id": "doc7",
+      "text": "Dot product similarity, also known as scalar product, measures the product of the magnitudes of two vectors and the cosine of the angle between them. Unlike cosine similarity, dot product is affected by vector magnitude, which means longer documents might receive higher similarity scores. While this can be a disadvantage in some cases, it can be beneficial when document length correlates with relevance. Dot product is generally faster to compute than cosine similarity since it doesn't require normalization."
+    },
+    {
+      "document_id": "doc8",
+      "text": "Sentence-BERT (SBERT) is a modification of the BERT model that uses siamese and triplet networks to derive semantically meaningful sentence embeddings. The all-MiniLM-L6-v2 variant is a distilled model that offers a good balance between performance and efficiency. It produces 384-dimensional embeddings that capture the semantic content of text passages, enabling effective similarity search and clustering. Due to its smaller size, it's significantly faster than larger models while maintaining competitive accuracy on semantic tasks."
+    },
+    {
+      "document_id": "doc9",
+      "text": "RAG (Retrieval-Augmented Generation) systems combine retrieval components with generative AI to produce more accurate and informative responses. The retrieval component searches for relevant information from a knowledge base, while the generative component uses this information to create coherent responses. RAG systems benefit from efficient chunking and embedding strategies to optimize retrieval accuracy. Effective evaluation of RAG systems should consider both retrieval metrics (precision, recall) and generation quality metrics like fluency and factual accuracy."
+    },
+    {
+      "document_id": "doc10",
+      "text": "Qdrant is an open-source vector similarity search engine designed for production usage. It offers a combination of vector search with filtering capabilities, making it suitable for hybrid search applications. Qdrant supports multiple distance metrics including cosine, dot product, and Euclidean, and provides approximate nearest neighbor search algorithms for scalability. It features optimized indices, CRUD operations, and optional payload storage with the vectors. For production environments, Qdrant offers replication, sharding, and a distributed architecture."
     }
   ],
   "test_queries": [
     {
       "query": "What is chunking in RAG?",
-      "relevant_doc_ids": ["doc1"]
+      "relevant_doc_ids": ["doc1", "doc9"]
     },
     {
       "query": "Explain vector databases",
-      "relevant_doc_ids": ["doc2"]
+      "relevant_doc_ids": ["doc2", "doc10"]
     },
     {
       "query": "How do embedding models work?",
-      "relevant_doc_ids": ["doc3"]
+      "relevant_doc_ids": ["doc3", "doc8"]
     },
     {
       "query": "What chunking methods exist?",
-      "relevant_doc_ids": ["doc1"]
+      "relevant_doc_ids": ["doc1", "doc4", "doc5"]
+    },
+    {
+      "query": "Describe fixed-size chunking",
+      "relevant_doc_ids": ["doc1", "doc4"]
+    },
+    {
+      "query": "How does recursive character chunking work?",
+      "relevant_doc_ids": ["doc1", "doc5"]
+    },
+    {
+      "query": "Compare cosine similarity and dot product",
+      "relevant_doc_ids": ["doc2", "doc6", "doc7"]
+    },
+    {
+      "query": "What are the features of Qdrant?",
+      "relevant_doc_ids": ["doc2", "doc10"]
+    },
+    {
+      "query": "Tell me about Sentence-BERT and MiniLM models",
+      "relevant_doc_ids": ["doc3", "doc8"]
+    },
+    {
+      "query": "What metrics should be considered for RAG evaluation?",
+      "relevant_doc_ids": ["doc9"]
+    },
+    {
+      "query": "Which similarity metric is better for documents of different lengths?",
+      "relevant_doc_ids": ["doc6", "doc7"]
+    },
+    {
+      "query": "How do chunking strategies affect RAG system performance?",
+      "relevant_doc_ids": ["doc1", "doc4", "doc5", "doc9"]
     }
   ],
   "chunking_methods": ["fixed_size", "recursive_character"],

@@ -1,0 +1,47 @@
+{
+  "metrics": [
+    {
+      "chunking_method": "fixed_size",
+      "similarity_algorithm": "cosine",
+      "accuracy": 0.45,
+      "precision": 0.45,
+      "recall": 1.0,
+      "f1_score": 0.6206896551724138,
+      "latency": 56.00961049397787
+    },
+    {
+      "chunking_method": "fixed_size",
+      "similarity_algorithm": "dot_product",
+      "accuracy": 0.45,
+      "precision": 0.45,
+      "recall": 1.0,
+      "f1_score": 0.6206896551724138,
+      "latency": 62.574803829193115
+    },
+    {
+      "chunking_method": "recursive_character",
+      "similarity_algorithm": "cosine",
+      "accuracy": 0.45,
+      "precision": 0.45,
+      "recall": 1.0,
+      "f1_score": 0.6206896551724138,
+      "latency": 33.60466162363688
+    },
+    {
+      "chunking_method": "recursive_character",
+      "similarity_algorithm": "dot_product",
+      "accuracy": 0.45,
+      "precision": 0.45,
+      "recall": 1.0,
+      "f1_score": 0.6206896551724138,
+      "latency": 44.868131478627525
+    }
+  ],
+  "best_combination": {
+    "chunking_method": "fixed_size",
+    "similarity_algorithm": "cosine",
+    "f1_score": "0.6206896551724138"
+  },
+  "timestamp": "2025-08-01T16:01:10.340319",
+  "notes": "Evaluation completed on 12 test queries against 10 documents."
+}
